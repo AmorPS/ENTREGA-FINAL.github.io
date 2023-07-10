@@ -1,0 +1,359 @@
+---
+title: "ENTREGA FINAL"
+author: "ADCPS"
+date: "2023-05-25"
+output: rmdformats::downcute
+
+---
+```{r}
+library(rmdformats)
+```
+
+
+A. Objetivo del reporte: 
+
+El objetivo del trabajo fue investigar los factores que influyen en la baja empleabilidad femenina a nivel mundial en el año 2019. Sabemos que esta situación en términos generales, indica una realidad dispar o desigualdad en las oportunidades laborales entre ambos géneros y aborda  la situación en la que las mujeres enfrentan dificultades para obtener y mantener empleos remunerados.
+
+Para poder lograrlo, se utilizó la técnica de regresión lineal múltiple. Esta técnica fue elegida debido a su capacidad para analizar múltiples variables independientes y su relación central con una variable dependiente, en este caso, la empleabilidad femenina. El estudio se enfocó en investigar aspectos como la discriminación de género, las barreras educativas, la falta de oportunidades laborales, los estereotipos de género, violencia y otros factores socioeconómicos que pudieran afectar negativamente la baja empleabilidad femenina.
+
+La técnica de regresión lineal múltiple permite modelar y cuantificar la relación entre una variable dependiente y varias variables independientes, considerando sus efectos simultáneamente. En el contexto de este estudio, estas variables independientes incluían aspectos ligados a la  violencia, la discriminación de género, la natalidad, la situación económica, para la medición del tema central. Al utilizar esta técnica, se pudo obtener una comprensión más completa de cómo estas variables interactúan y contribuyen a la baja empleabilidad femenina a nivel global, haciendo énfasis en el año 2019.
+
+Al poder obtener estimaciones de los coeficientes de regresión, estos indican la magnitud y la dirección de la influencia de cada variable independiente sobre la variable dependiente. Lo que proporciona para el trabajo información cuantitativa valiosa sobre cómo cada factor afecta la baja empleabilidad femenina y qué factores podrían tener un impacto más significativo en esta problemática.En pocas palabras, se trata de una técnica favorable para el estudio, pues permite comprender aún mejor la relación entre las variables y  lo que buscamos contribuir a las hipótesis del tema elegido para una  mejor comprensión y posible solución de este desafío.
+
+El propósito de este trabajo era generar conocimiento y conciencia sobre las desigualdades de género en el ámbito laboral, así como proporcionar información relevante para la formulación de políticas y la implementación de acciones que promovieran la igualdad de oportunidades para las mujeres en el mercado laboral. Al comprender mejor los factores que influyen en la baja empleabilidad femenina, se buscaba impulsar cambios positivos, fomentar la inclusión y trabajar hacia una sociedad más equitativa en términos de oportunidades laborales.
+
+Abordar la baja empleabilidad femenina es fundamental para promover la igualdad de género y el desarrollo sostenible. Implica la implementación de políticas y medidas que fomenten la igualdad de oportunidades en el empleo, eliminación de barreras y estereotipos de género, la promoción de la educación y capacitación equitativa, así como la creación de entornos laborales inclusivos y libres de discriminación. Todos estos elementos mencionados, han contribuido a un correcto y más enfocado desarrollo del trabajo.
+
+
+
+B.Construcción de las bases de datos: 
+
+Para la construcción de las bases de datos utilizadas para el estudio de la variable dependiente de la baja empleabilidad femenina a nivel mundial en el año 2019 se accedió a la red de base de datos del banco mundial. El cual brindó información necesaria para el análisis estadístico al que se aplicaron las bases de datos. Por lo que el primer paso fue buscar dentro de la página web que nos brindaba el banco mundial, temáticas que estén relacionadas con la mujer y en segunda con el desempleo mundial. Lo que nos ofrecería ejes focales desde un contexto económico como social en el que las mujeres suelen desarrollarse. 
+El proceso que hicimos uso fue de clasificar cada base de datos recolectada que tenga relación con nuestra variable dependiente de forma que se clasificara con lo económico o lo social y dentro de las cuales se observaban si eran categóricas o numéricas. De manera que trabajo asalariado, tasa de natalidad, PBI, empleo vulnerable e inflación fueron las variables independientes que aplicamos dentro de nuestra investigación.
+
+
+
+C. MODELO DE REGRESIÓN LINEAL MÚLTIPLE
+
+```{r}
+library(rio)
+data0=import("Data_TRABAJO_EST.xlsx")
+```
+
+
+
+```{r}
+data0$Igual_contrat=as.factor(data0$Igual_contrat)
+data0$Igual_contrat=factor(data0$Igual_contrat,
+                          levels = levels(data0$Igual_contrat),
+                          labels = c("No","Si"),
+                          ordered = F)
+table(data0$Igual_contrat)
+
+```
+
+
+
+```{r}
+data0[!is.na(data0$Desemple_fe),]
+data0[!is.na(data0$Deuda_Gob),]
+data0[!is.na(data0$Empleo_Vul),]
+data0[!is.na(data0$Inflación),]
+data0[!is.na(data0$PBI),]
+data0[!is.na(data0$Persev_esc),]
+data0[!is.na(data0$Tasa_fert),]
+data0[!is.na(data0$Tasa_nat),]
+data0[!is.na(data0$Tra_asal),]
+data0[!is.na(data0$Tasa_sect),]
+data0[!is.na(data0$Tasa_viol),]
+data0[!is.na(data0$Igual_contrat),]
+
+```
+
+
+
+# TRABAJO ASALARIADO, TASA DE NATALIDAD Y PBI
+
+```{r}
+modelo1<-lm(Desemple_fe~ Tra_asal + Tasa_nat + PBI, data0)
+summary(modelo1)
+
+```
+
+
+#PBI Y EMPLEO VULNERABLE
+
+```{r}
+modelo2<-lm(Desemple_fe~ PBI + Empleo_Vul, data0)
+summary(modelo2)
+```
+
+#PBI, EMPLEO VULNERABLE E INFLACIÓN
+
+```{r}
+modelo3<-lm(Desemple_fe~ PBI + Empleo_Vul + Inflación, data0)
+summary(modelo3)
+```
+
+
+
+#Comparación de modelos 
+
+```{r}
+library(stargazer)
+stargazer(modelo1,modelo2, modelo3, type ="text")
+
+```
+
+
+```{r}
+library(modelsummary)
+models = list(modelo1,modelo2,modelo3)
+modelsummary(models, title = "Regresion: modelo 1, 2 y 3",
+             stars = TRUE,
+             output = "kableExtra")
+
+```
+
+
+
+#DIAGNÓSTICOS DE LA REGRESIÓN:
+#1. LINEALIDAD
+
+```{r}
+plot(modelo2,1) #Se espera que la línea roja tienda a la horizontal
+```
+
+```{r}
+mean(modelo2$residuals)
+
+```
+#NOTA: El modelo cumple con el supuesto de linealidad, pues el promedio del residuo es menor a 0
+
+
+
+#2. HOMOCEDASTICIDAD
+
+```{r}
+plot(modelo2,3) # Se espera que la línea roja debe tender a horizontal.
+```
+
+```{r}
+library(lmtest)
+bptest(modelo2) 
+```
+
+
+#Nota: El modelo cumple con el requisito de homocedásticidad, pues se observa que el p-value es mayor a 0.05.
+
+
+
+#3. NORMALIDAD DE RESIDUOS
+
+```{r}
+# puntos cerca a la diagonal
+plot(modelo2, 2)
+```
+
+#Se observa en el gráfico que existe una normalidad, pues los puntos se acercan la línea oblicua del gráfico que representa una distribución normal.
+
+
+#test de shapiro
+
+
+```{r}
+shapiro.test(modelo2$residuals)
+```
+
+
+#El test de Shapiro-Wilk confirma lo observado en el gráfico
+
+#4. NO MULTICOLINELIDAD
+
+```{r}
+library(DescTools)
+VIF(modelo2)
+```
+
+#Este modelo es menor a 5, por lo tanto, puede ser problemático al presentar multicolinealidad.
+
+
+#5. VALORES INFLUYENTES
+
+
+```{r}
+plot(modelo2, 5)
+```
+
+
+```{r}
+checModelo2=as.data.frame(influence.measures(modelo2)$is.inf)
+checModelo2[checModelo2$cook.d & checModelo2$hat,] #visualizamos valores
+
+```
+
+
+
+#NOTA: Tanto en el gráfico como en la data frame se observa que no hay valores influyentes. 
+
+
+#CONCLUSIÓN
+
+#Finalmente, podemos decir que el Modelo 2 cumple con 3 de los 5 requisitos de diagnostico.
+
+
+-------------------------------------------------------------------------------------------------------
+
+
+#El presente trabajo tiene como finalidad responder sobre los factores que influyen en la baja tasa de empleabilidad femenina a nivel mundial en el año 2019. Para conseguir tal objetivo, nos disponemos a evaluar la variable dependiente “Desempleo Femenino” y el impacto que tienen las variables independientes sobre esta: 
+
+Leyenda: 
+VD: Desemple_fe = Desempleo femenino
+V.I: PBI = Ingreso per cápita 
+V.I: Deuda_Gob = Deuda internacional por país
+V.I: Inflación = Tasa inflacionaria por país
+VI: Persev_esc = Continuidad en la escuela hasta el último grado del nivel primario 
+VI: Tasa_fert = Nacimientos por cada mujer (promedio de hijos) por país
+VI: Tasa_nat = Tasa bruta de natalidad por país
+VI: Empleo_Vul = Empleo Vulnerable
+VI: Tra_asal = Trabajo asalariado 
+VI: Tasa_sect = Tasa según el sector en el que trabaja una mujer
+VI: Tasa_viol = Tasa de violencia contra la mujer 
+VI: Igual_contrat = Igualdad de contrato
+
+Nota: 
+Teniendo en cuenta que en el trabajo exige la utilización de variables independientes que expliquen modelos de correlación. Utilizaremos las variables independientes Trabajo asalariado (Tra_asal), Tasa de Natalidad (Tasa_nat), Ingreso Per Cápita (PBI), Inflación y Empleo Vulnerable (Empleo_Vul)
+
+
+Modelo 1: 
+VD:  Desemple_fe = Desempleo femenino
+VI: Trabajo asalariado
+VI: Tasa de natalidad
+VI: PBI
+
+Modelo 2: 
+VD:  Desemple_fe = Desempleo femenino
+VI: PBI
+VI: Empleo Vulnerable 
+
+Modelo 3: 
+VD:  Desemple_fe = Desempleo femenino
+VI: Empleo Vulnerable 
+VI: Inflación 
+PBI
+
+Interpretación: Modelo 2
+
+El modelo elegido es el número 2 y para probar nuestra hipótesis debemos apreciar que el efecto que tiene la “Tasa de empleo vulnerable” es significativo con respecto a 0.1, ya que la magnitud con la que se indica a este es de -0.063 el cual indica cuánto varía el desempleo de las mujeres en promedio cuando la tasa de empleo vulnerable aumenta en una unidad, esto siendo controlado por el PBI. 
+Ahora si bien se observa un efecto significativo este es inverso, ya que el coeficiente calculado resulta ser negativo.
+
+Por otro lado, el R Cuadrado ajustado (0.1299) nos brinda un porcentaje que es multiplicado por 100 para obtener una pista de la cercanía que se puede tener de una situación cerca (cuando vale 1).
+Asimismo, luego de haber hecho los diagnósticos correspondientes de la regresión de dicho modelo, en primer lugar, hallamos que la linealidad se encuentra presente en el modelo lo que terminaría significando que servirá para explicar las mismas variables con datos diferentes de otros estudios.
+En segundo lugar,, en el diagnóstico de homocedasticidad se asume que la dispersión de los errores en la estimación de la tasa de desempleo de la mujer mantiene una variación homogénea,esto al ser comprobado con el test de Breusch-Pagan en donde el estadístico sale 5.8242 con un p-valor de 0.05436, de ahí que se ve que no muestra un sesgo en los resultados y un valor mayor a 0.05 se demuestra su homocedasticidad.
+
+En tercer lugar, en el diagnóstico de la normalidad de residuos se obtiene que los residuos se distribuyen de manera normal con respecto a la distancia entre el valor esperado y el observado de las variables, ya que esto se llega a confirmar con el uso de la prueba de Shapiro-Wilk con un valor de 0.88818 y un p-valor 8.191e-09, los cuales demuestran ser mayores a 0.05 como lo estima el test.
+En cuarto lugar, con respecto a la no multicolinealidad, sabemos que se da en este caso al existir predictores con una correlación muy alta entre sí. Este modelo es menor a 5, por lo tanto, puede ser problemático, pues evita calcular de forma correcta el efecto de cada regresor.
+
+Hay casos particulares, que tienen la capacidad de trastocar lo que el modelo representa. A veces detectandose y suprimiéndolos, podemos ver un mejor modelo. Es necesario enfatizar que no todo valor atípico es influyente. Si queremos comprender mejor los posibles casos influyentes, le prestamos atención al índice de Cook y a los valores predecidos (los hat values). Es por ello que, tanto en el caso del gráfico como el data frame, vemos que en el presente caso no hay ninguna fila que afecte los cálculos de la regresión (sin él habría otro resultado).
+
+A partir de lo mencionado anteriormente y realizado los diagnósticos consideramos que el modelo es robusto, pues cumple con la mayoría de los requisitos.
+
+
+
+D. ANÁLISIS FACTORIAL EXPLORATORIO 
+
+```{r}
+library(rio)
+data=import("Data_TRABAJO_EST (1).xlsx")
+```
+
+
+```{r}
+data$Desemple_fe=as.numeric(data$Desemple_fe)
+```
+
+
+```{r}
+data = data[complete.cases(data),]
+```
+
+
+```{r}
+data$Igual_contrat=as.factor(data$Igual_contrat)
+data$Igual_contrat=factor(data$Igual_contrat,
+                          levels = levels(data$Igual_contrat),
+                          labels = c("No","Si"),
+                          ordered = F)
+table(data$Igual_contrat)
+
+```
+
+
+2 Analisis Factorial Exploratorio (EFA)
+
+a. Subseteo de la data:
+```{r}
+dontselect=c("Country Name","Country Code" )
+select=setdiff(names(data),dontselect) 
+theData=data[,select]
+```
+
+b. Calculo de matriz de correlación:
+```{r}
+library(polycor)
+corMatrix=polycor::hetcor(theData)$correlations
+```
+
+c. Exploración de correlaciones:
+```{r}
+library(ggcorrplot)
+
+ggcorrplot(corMatrix)
+```
+
+
+Nota:Se observa poca esperanza de una analisis factorial.
+
+d. Verificación de si los datos permiten factorizar: 
+
+```{r}
+library(psych)
+psych::KMO(corMatrix) 
+```
+
+Se muestra que los valores del KMO fluctúan. Tenemos valores muy buenos como los del Desempleo Femenino (0,85), el PBI (0,86) y la Perseverancia escolar (0,94). Además, se observa valores medios como el Empleo Vulnerable (0,76), la Tasa Natalidad (0,75), Tasa de Fertilidad (0.73), la Tasa Asalariada (0,75) y la Igualdad de Contrato (0,72). Sin embargo, también se observan valores inferiores o muy malos (menores de 0,6 de KMO) en las demás variables que demuestran que no están listas para el análisis factorial.
+
+PRUEBA DE M. IDENTIDAD: 
+
+```{r}
+cortest.bartlett(corMatrix,n=nrow(theData))$p.value>0.05
+```
+
+Nota: Luego de la evaluación mediante esta prueba llegamos a la conclusión que para nuestro grupo de variables resulta muy difícil ser sintetizadas. 
+
+
+PRUEBA M.SINGULAR:
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corMatrix)
+```
+
+
+#Conclusión: 
+
+Las distintas pruebas y el anális factorial exploratorio nos demuestran que los valores encontrados en nuestra base de datos son difíciles de sientetizar en un número determinado de factores.
+
+
+En resumen, el análisis factorial exploratorio realizado no ha arrojado resultados significativos o concluyentes. A pesar de nuestros esfuerzos por identificar factores claros y patrones en los datos, no se encontraron estructuras discernibles que pudieran ser interpretadas de manera significativa. Esta falta de resultados puede atribuirse a diversas limitaciones y factores que podrían haber influido en el análisis.
+Es posible que las limitaciones en la calidad o la selección de los datos hayan afectado la capacidad de identificar factores relevantes. Además, el tamaño de la muestra puede haber sido insuficiente para capturar las relaciones complejas y sutiles presentes en los datos. También es posible que las variables seleccionadas no hayan sido las más adecuadas para el análisis, lo que podría haber afectado la identificación de estructuras latentes.
+Este análisis nos ha proporcionado lecciones valiosas sobre las limitaciones metodológicas y los desafíos asociados con el estudio del fenómeno en cuestión. Reflexionando sobre estos resultados, es evidente la importancia de una cuidadosa selección de variables, una muestra representativa y técnicas de análisis adecuadas para obtener resultados más sólidos en investigaciones futuras.
+
+En conclusión, a pesar de no haber obtenido resultados concluyentes en este análisis factorial exploratorio, los hallazgos negativos nos brindan valiosas enseñanzas sobre las limitaciones del estudio y nos guían hacia posibles mejoras en futuras investigaciones.Por lo tanto, nuestras variables no están listas para el análisis factoiral completo, impidiendo realizar el siguiente pasó a seguir el cuál es el analisi factorial confirmatorio. 
+
+
+
+
+
+
